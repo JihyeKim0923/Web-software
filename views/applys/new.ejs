@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../partials/head') %>
+  </head>
+  <body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mb-3">
+
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb p-1 pl-2 pr-2">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/applys">Board</a></li>
+          <li class="breadcrumb-item active" aria-current="page">New apply</li>
+        </ol>
+      </nav>
+
+      <form action="/applys<%= getApplyQueryString() %>" method="post">
+
+        <!-- title  -->
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" id="title" name="title" value="<%= apply.title %>" class="form-control <%= (errors.title)?'is-invalid':'' %>">
+          <% if(errors.title){ %>
+            <span class="invalid-feedback"><%= errors.title.message %></span>
+          <% } %>
+        </div>
+
+        <!-- body 봉사내용  -->
+        <div class="form-group">
+          <label for="body">봉사내용</label>
+          <textarea id="body" name="body" rows="5" class="form-control <%= (errors.body)?'is-invalid':'' %>"><%= apply.body %></textarea>
+          <% if(errors.body){ %>
+            <span class="invalid-feedback"><%= errors.body.message %></span>
+          <% } %>
+        </div>
+
+        <!-- date 봉사날짜  -->
+        <div class="form-group">
+          <label for="date">봉사날짜</label>
+          <input type="date" id="date" name="date" value="<%= apply.date %>" class="form-control <%= (errors.date)?'is-invalid':'' %>">
+          <% if(errors.date){ %>
+            <span class="invalid-feedback"><%= errors.date.message %></span>
+          <% } %>
+        </div>
+
+        <!-- time 봉사시간  -->
+        <div class="form-group">
+          <label for="time">봉사시간</label>
+          <input type="number" id="time" name="time" value="<%= apply.time %>" class="form-control <%= (errors.time)?'is-invalid':'' %>">
+          <% if(errors.time){ %>
+            <span class="invalid-feedback"><%= errors.time.message %></span>
+          <% } %>
+        </div>
+
+        <!-- place 봉사장소  -->
+        <div class="form-group">
+          <label for="place">봉사장소</label>
+          <textarea id="place" name="place" rows="5" class="form-control <%= (errors.place)?'is-invalid':'' %>"><%= apply.place %></textarea>
+          <% if(errors.time){ %>
+            <span class="invalid-feedback"><%= errors.place.message %></span>
+          <% } %>
+        </div>
+
+        <% if(errors.unhandled){ %>
+          <div class="invalid-feedback d-block">
+            <%= errors.unhandled %>
+          </div>
+        <% } %>
+
+        <div>
+          <a class="btn btn-primary" href="/applys<%= getApplyQueryString() %>">Back</a>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+      </form>
+
+    </div>
+  </body>
+</html>

@@ -5,27 +5,50 @@ var bcrypt = require('bcryptjs');
 var userSchema = mongoose.Schema({
   username:{
     type:String,
-    required:[true,'Username is required!'],
-    match:[/^.{4,12}$/,'Should be 4-12 characters!'],
+    required:[true,'아이디는 필수 항목입니다.'],
+    match:[/^.{3,12}$/,'아이디는 3-12글자여야합니다.'],
     trim:true,
     unique:true
   },
   password:{
     type:String,
-    required:[true,'Password is required!'],
+    required:[true,'비밀번호는 필수 항목입니다.'],
     select:false
   },
   name:{
     type:String,
-    required:[true,'Name is required!'],
-    match:[/^.{4,12}$/,'Should be 4-12 characters!'],
+    required:[true,'이름은 필수 항목입니다.'],
+    match:[/^.{2,12}$/,'이름은 2-12글자여야합니다.'],
     trim:true
   },
   email:{
     type:String,
-    match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,'Should be a vaild email address!'],
+    match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,'유효하지 않은 이메일입니다.'],
+    trim:true
+  },
+  phone:{
+    type:String,
+    required:[true,'전화번호는 필수 항목입니다.'],
+    match:[/^.{11}$/,'전화번호는 11자여야합니다.'],
+    trim:true
+  },
+  address:{
+    type:String,
+    required:[true,'주소는 필수 항목입니다.'],
+    trim:true
+  },
+  birth:{
+    type:String,
+    required:[true,'생년월일 필수 항목입니다.'],
+    match:[/^.{6}$/,'생년월일은 6자여야합니다.'],
+    trim:true
+  },
+  gender:{
+    type:String,
+    required:[true,'성별 필수 항목입니다.'],
     trim:true
   }
+
 },{
   toObject:{virtuals:true}
 });

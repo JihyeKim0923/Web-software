@@ -1,8 +1,8 @@
 var express  = require('express');
 var router = express.Router();
-var Post = require('../models/Post');
+var Apply = require('../models/Apply');
 var User = require('../models/User');
-var Comment = require('../models/Comment');
+var Comment2 = require('../models/Comment2');
 var util = require('../util');
 
 // Index
@@ -15,12 +15,12 @@ router.get('/', async function(req, res){
   var skip = (page-1)*limit;
   var maxPage = 0;
   var searchQuery = await createSearchQuery(req.query);
-  var posts = [];
+  var applys = [];
 
   if(searchQuery) {
-    var count = await Post.countDocuments(searchQuery);
+    var count = await Apply.countDocuments(searchQuery);
     maxPage = Math.ceil(count/limit);
-    posts = await Post.aggregate([
+    applys = await Apply.aggregate([
       { $match: searchQuery },
       { $lookup: {
           from: 'users',
@@ -33,10 +33,10 @@ router.get('/', async function(req, res){
       { $skip: skip },
       { $limit: limit },
       { $lookup: {
-          from: 'comments',
+          from: 'comments2',
           localField: '_id',
-          foreignField: 'post',
-          as: 'comments'
+          foreignField: 'apply',
+          as: 'comments2'
       } },
       { $project: {
           title: 1,
@@ -46,13 +46,14 @@ router.get('/', async function(req, res){
           views: 1,
           numId: 1,
           createdAt: 1,
-          commentCount: { $size: '$comments'}
+          comment2Count: { $size: '$comments2'}
       } },
     ]).exec();
   }
 
-  res.render('posts/index', {
-    posts:posts,
+
+  res.render('applys/index', {
+    applys:applys,
     currentPage:page,
     maxPage:maxPage,
     limit:limit,
@@ -63,38 +64,39 @@ router.get('/', async function(req, res){
 
 // New
 router.get('/new', util.isLoggedin, function(req, res){
-  var post = req.flash('post')[0] || {};
+  var apply = req.flash('apply')[0] || {};
   var errors = req.flash('errors')[0] || {};
-  res.render('posts/new', { post:post, errors:errors });
+  res.render('applys/new', { apply:apply, errors:errors });
 });
 
 // create
 router.post('/', util.isLoggedin, function(req, res){
   req.body.author = req.user._id;
-  Post.create(req.body, function(err, post){
+
+  Apply.create(req.body, function(err, apply){
     if(err){
-      req.flash('post', req.body);
+      req.flash('apply', req.body);
       req.flash('errors', util.parseError(err));
-      return res.redirect('/posts/new'+res.locals.getPostQueryString());
+      return res.redirect('/applys/new'+res.locals.getApplyQueryString());
     }
-    res.redirect('/posts'+res.locals.getPostQueryString(false, { page:1, searchText:'' }));
+    res.redirect('/applys'+res.locals.getApplyQueryString(false, { page:1, searchText:'' }));
   });
 });
 
 // show
 router.get('/:id', function(req, res){
-  var commentForm = req.flash('commentForm')[0] || { _id: null, form: {} };
-  var commentError = req.flash('commentError')[0] || { _id:null, parentComment: null, errors:{} };
+  var comment2Form = req.flash('comment2Form')[0] || { _id: null, form: {} };
+  var comment2Error = req.flash('comment2Error')[0] || { _id:null, parentComment2: null, errors:{} };
 
   Promise.all([
-      Post.findOne({_id:req.params.id}).populate({ path: 'author', select: 'username' }),
-      Comment.find({post:req.params.id}).sort('createdAt').populate({ path: 'author', select: 'username' })
+      Apply.findOne({_id:req.params.id}).populate({ path: 'author', select: 'username' }),
+      Comment2.find({apply:req.params.id}).sort('createdAt').populate({ path: 'author', select: 'username' })
     ])
-    .then(([post, comments]) => {
-      post.views++;
-      post.save();
-      var commentTrees = util.convertToTrees(comments, '_id','parentComment','childComments');
-      res.render('posts/show', { post:post, commentTrees:commentTrees, commentForm:commentForm, commentError:commentError});
+    .then(([apply, comments2]) => {
+      apply.views++;
+      apply.save();
+      var comment2Trees = util.convertToTrees(comments2, '_id','parentComment2','childComments2');
+      res.render('applys/show', { apply:apply, comment2Trees:comment2Trees, comment2Form:comment2Form, comment2Error:comment2Error});
     })
     .catch((err) => {
       return res.json(err);
@@ -103,38 +105,38 @@ router.get('/:id', function(req, res){
 
 // edit
 router.get('/:id/edit', util.isLoggedin, checkPermission, function(req, res){
-  var post = req.flash('post')[0];
+  var apply = req.flash('apply')[0];
   var errors = req.flash('errors')[0] || {};
-  if(!post){
-    Post.findOne({_id:req.params.id}, function(err, post){
+  if(!apply){
+    Apply.findOne({_id:req.params.id}, function(err, apply){
         if(err) return res.json(err);
-        res.render('posts/edit', { post:post, errors:errors });
+        res.render('applys/edit', { apply:apply, errors:errors });
       });
   }
   else {
-    post._id = req.params.id;
-    res.render('posts/edit', { post:post, errors:errors });
+    apply._id = req.params.id;
+    res.render('applys/edit', { apply:apply, errors:errors });
   }
 });
 
 // update
 router.put('/:id', util.isLoggedin, checkPermission, function(req, res){
   req.body.updatedAt = Date.now();
-  Post.findOneAndUpdate({_id:req.params.id}, req.body, {runValidators:true}, function(err, post){
+  Apply.findOneAndUpdate({_id:req.params.id}, req.body, {runValidators:true}, function(err, apply){
     if(err){
-      req.flash('post', req.body);
+      req.flash('apply', req.body);
       req.flash('errors', util.parseError(err));
-      return res.redirect('/posts/'+req.params.id+'/edit'+res.locals.getPostQueryString());
+      return res.redirect('/applys/'+req.params.id+'/edit'+res.locals.getApplyQueryString());
     }
-    res.redirect('/posts/'+req.params.id+res.locals.getPostQueryString());
+    res.redirect('/applys/'+req.params.id+res.locals.getApplyQueryString());
   });
 });
 
 // destroy
 router.delete('/:id', util.isLoggedin, checkPermission, function(req, res){
-  Post.deleteOne({_id:req.params.id}, function(err){
+  Apply.deleteOne({_id:req.params.id}, function(err){
     if(err) return res.json(err);
-    res.redirect('/posts'+res.locals.getPostQueryString());
+    res.redirect('/applys'+res.locals.getApplyQueryString());
   });
 });
 
@@ -142,9 +144,9 @@ module.exports = router;
 
 // private functions
 function checkPermission(req, res, next){
-  Post.findOne({_id:req.params.id}, function(err, post){
+  Apply.findOne({_id:req.params.id}, function(err, apply){
     if(err) return res.json(err);
-    if(post.author != req.user.id) return util.noPermission(req, res);
+    if(apply.author != req.user.id) return util.noPermission(req, res);
 
     next();
   });
@@ -154,16 +156,16 @@ async function createSearchQuery(queries){
   var searchQuery = {};
   if(queries.searchType && queries.searchText && queries.searchText.length >= 3){
     var searchTypes = queries.searchType.toLowerCase().split(',');
-    var postQueries = [];
+    var applyQueries = [];
     if(searchTypes.indexOf('title')>=0){
-      postQueries.push({ title: { $regex: new RegExp(queries.searchText, 'i') } });
+      applyQueries.push({ title: { $regex: new RegExp(queries.searchText, 'i') } });
     }
     if(searchTypes.indexOf('body')>=0){
-      postQueries.push({ body: { $regex: new RegExp(queries.searchText, 'i') } });
+      applyQueries.push({ body: { $regex: new RegExp(queries.searchText, 'i') } });
     }
     if(searchTypes.indexOf('author!')>=0){
       var user = await User.findOne({ username: queries.searchText }).exec();
-      if(user) postQueries.push({author:user._id});
+      if(user) applyQueries.push({author:user._id});
     }
     else if(searchTypes.indexOf('author')>=0){
       var users = await User.find({ username: { $regex: new RegExp(queries.searchText, 'i') } }).exec();
@@ -171,9 +173,9 @@ async function createSearchQuery(queries){
       for(var user of users){
         userIds.push(user._id);
       }
-      if(userIds.length>0) postQueries.push({author:{$in:userIds}});
+      if(userIds.length>0) applyQueries.push({author:{$in:userIds}});
     }
-    if(postQueries.length>0) searchQuery = {$or:postQueries};
+    if(applyQueries.length>0) searchQuery = {$or:applyQueries};
     else searchQuery = null;
   }
   return searchQuery;

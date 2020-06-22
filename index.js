@@ -45,8 +45,10 @@ app.use(function(req,res,next){
 // Routes
 app.use('/', require('./routes/home'));
 app.use('/posts', util.getPostQueryString, require('./routes/posts'));
+app.use('/applys', util.getApplyQueryString, require('./routes/applys'));
 app.use('/users', require('./routes/users'));
 app.use('/comments', util.getPostQueryString, require('./routes/comments'));
+app.use('/comments2', util.getApplyQueryString, require('./routes/comments2'));
 
 // Port setting
 var port = 3000;

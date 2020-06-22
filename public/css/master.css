@@ -1,5 +1,6 @@
 body {
-  font-family: 'Open Sans', sans-serif;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
 }
 .breadcrumb-item {
   font-size: 0.8em !important;
@@ -15,18 +16,24 @@ body {
 .board-table {
   table-layout: fixed;
 }
+.board-table .numId,
+.board-table .views{
+  width: 60px;
+  text-align: center;
+}
 .board-table .author,
 .board-table .date {
   width: 100px;
+  text-align: center;
 }
-.board-table .title-container:hover .title-comments,
+.board-table .title-container:hover .title-comments .title-container:hover .title-comments2,
 .board-table .title-container:hover .title-text
 {
   text-decoration: underline;
 }
 
 .post-body,
-.comment-text {
+.comment-text .comment2-text {
   white-space: pre-line;
 }
 .post-info{
@@ -45,15 +52,18 @@ body {
 }
 
 .highlighted {
-  background-color: yellow;
+  background-color: rgb(255, 235, 133);
 }
-
+.comment2-edit,
+.comment2-reply,
+.comment2-edit-enabled .comment2-show,
 .comment-edit,
 .comment-reply,
 .comment-edit-enabled .comment-show {
   display:none;
 }
-
+.comment2-edit-enabled .comment2-edit,
+.comment2-reply-enabled .comment2-reply,
 .comment-edit-enabled .comment-edit,
 .comment-reply-enabled .comment-reply {
   display:inherit;

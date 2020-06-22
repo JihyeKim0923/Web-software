@@ -13,14 +13,15 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect(process.env.MONGO_DB);
-var db = mongoose.connection;
-db.once('open', function(){
-  console.log('DB connected');
+mongoose.connect('mongodb://127.0.0.1:27017/dbname', {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+})
+.then(() => console.log('DB Connected!'))
+.catch(err => {
+     console.log('DB Connection Error: ' + err);
 });
-db.on('error', function(err){
-  console.log('DB ERROR : ', err);
-});
+
 
 // Other settings
 app.set('view engine', 'ejs');
@@ -45,8 +46,13 @@ app.use(function(req,res,next){
 // Routes
 app.use('/', require('./routes/home'));
 app.use('/posts', util.getPostQueryString, require('./routes/posts'));
+app.use('/posts2', util.getPost2QueryString, require('./routes/posts2'));
+app.use('/posts3', util.getPost3QueryString, require('./routes/posts3'));
+app.use('/applys', util.getApplyQueryString, require('./routes/applys'));
 app.use('/users', require('./routes/users'));
 app.use('/comments', util.getPostQueryString, require('./routes/comments'));
+app.use('/comments2', util.getApplyQueryString, require('./routes/comments2'));
+app.use('/comments3', util.getPost2QueryString, require('./routes/comments3'));
 
 // Port setting
 var port = 3000;

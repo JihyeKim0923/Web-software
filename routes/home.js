@@ -9,6 +9,18 @@ router.get('/', function(req, res){
 router.get('/about', function(req, res){
   res.render('home/about');
 });
+router.get('/story', function(req, res){
+  res.render('home/story');
+});
+router.get('/member', function(req, res){
+  res.render('home/member');
+});
+router.get('/posts4', function(req, res){
+  res.render('home/posts4');
+});
+
+
+
 
 // Login
 router.get('/login', function (req,res) {
@@ -44,7 +56,8 @@ router.post('/login',
     }
   },
   passport.authenticate('local-login', {
-    successRedirect : '/posts',
+    successRedirect : '/',
+    successRedirect : '/',
     failureRedirect : '/login'
   }
 ));

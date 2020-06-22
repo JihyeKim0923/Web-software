@@ -1,3 +1,4 @@
+
 <%/*
  actionUrl
  comment
@@ -9,26 +10,24 @@
 <form action="<%= actionUrl %><%= getPostQueryString(true) %>" method="post">
   <fieldset <%= !isAuthenticated?'disabled':'' %>>
     <% if(parentComment){ %>
-      <input type="hidden" name="parentComment" value="<%= parentComment %>">
+      <input type="hidden" name="parentComment2" value="<%= parentComment %>">
     <% } %>
     <div class="row">
-      <div class="col-8">
-        <textarea name="text" rows="2" class="form-control <%= (commentError._id == comment._id && commentError.parentComment == parentComment && commentError.errors.text)?'is-invalid':'' %>"><%= (commentForm._id == comment._id)?commentForm.form.text:comment.text %></textarea>
+      <div class="col-5">
+        <textarea name="text" rows="2" class="form-r <%= (commentError._id == comment._id && commentError.parentComment2 == parentComment && commentError.errors.text)?'is-invalid':'' %>"><%= (commentForm._id == comment._id)?commentForm.form.text:comment.text %></textarea>
       </div>
-      <div class="col-4">
+      <div class="col-7">
         <% if(comment._id){ %>
-          <button type="submit" class="btn btn-primary h-100 mr-2 pl-4 pr-4">Edit</button>
-          <a href="javascript:void(0)" onclick="$('#comment-<%= comment._id %>').removeClass('comment-edit-enabled')">Cancel</a>
+          <button type="submit" class="btnr">수정</button>
         <% } else if(parentComment) {%>
-          <button type="submit" class="btn btn-primary h-100 mr-2">Add Reply</button>
-          <a href="javascript:void(0)" onclick="$('#comment-<%= parentComment %>').removeClass('comment-reply-enabled')">Cancel</a>
+          <button type="submit" class="btnr">확인</button>
         <% } else { %>
-          <button type="submit" class="btn btn-primary h-100 mr-2">Add Comment</button>
+          <button type="submit" class="btnr">확인</button>
         <% } %>
       </div>
     </div>
-    <% if(commentError._id == comment._id && commentError.parentComment == parentComment && commentError.errors.text){ %>
-      <span class="invalid-feedback d-block"><%= commentError.errors.text.message %></span>
+    <% if(commentError._id == comment._id && commentError.parentComment2 == parentComment && commentError.errors.text){ %>
+      <span class="invalid-feedback d-block"><%="내용을 작성해 주세요!" %></span>
     <% } %>
   </fieldset>
 </form>

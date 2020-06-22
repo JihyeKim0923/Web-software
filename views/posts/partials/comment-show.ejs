@@ -7,7 +7,6 @@
 
 <div class="border-top">
   <% if(comment.isDeleted){ %>
-    <div class="text-muted p-2">(Deleted Commnet)</div>
   <% } else { %>
     <div class="row pt-1 pb-1">
       <div class="col-3 col-md-2 col-lg-1 pl-4"><%= comment.author.username %></div>
@@ -15,26 +14,27 @@
         <div class="comment-show">
           <div class="comment-text mb-3"><%= comment.text %></div>
           <small class="d-block">
-            ( Created: <span data-date-time="<%= comment.createdAt %>"></span>
+            ( 게시일: <span data-date-time="<%= comment.createdAt %>"></span>
             <% if(comment.updatedAt){ %>
-              | Updated: <span data-date-time="<%= comment.updatedAt %>"></span>
+              | 수정일: <span data-date-time="<%= comment.updatedAt %>"></span>
             <% } %>
             )
           </small>
           <% if(isAuthenticated){ %>
             <small class="d-block">
-              <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled'); $('.comment-edit-enabled').removeClass('comment-edit-enabled'); $('#comment-<%= comment._id %>').addClass('comment-reply-enabled')">reply</a>
+              <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled'); $('.comment-edit-enabled').removeClass('comment-edit-enabled'); $('#comment-<%= comment._id %>').addClass('comment-reply-enabled')">댓글</a>
               <% if(comment.author && currentUser.id == comment.author.id){ %>
                 |
-                <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled'); $('.comment-edit-enabled').removeClass('comment-edit-enabled'); $('#comment-<%= comment._id %>').addClass('comment-edit-enabled')">Edit</a>
+                <a href="javascript:void(0)" onclick="$('.comment-reply-enabled').removeClass('comment-reply-enabled'); $('.comment-edit-enabled').removeClass('comment-edit-enabled'); $('#comment-<%= comment._id %>').addClass('comment-edit-enabled')">수정</a>
                 |
                 <form action="/comments/<%= comment._id %>?postId=<%= post._id %>&_method=delete<%= getPostQueryString(true) %>" method="post" class="d-inline">
-                  <a href="javascript:void(0)" onclick="confirm('Do you want to delete this?')?this.parentElement.submit():null;">Delete</a>
+                  <a href="javascript:void(0)" onclick="confirm('이 댓글을 지우시겠습니까?')?this.parentElement.submit():null;">삭제</a>
                 </form>
               <% } %>
             </small>
           <% } %>
         </div>
+        <br>
         <div class="comment-edit">
           <%- include('./comment-form', {
             actionUrl:'/comments/' + comment._id + '?postId=' + post._id + '&_method=put',
